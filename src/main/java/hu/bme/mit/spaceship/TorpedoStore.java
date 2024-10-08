@@ -9,10 +9,13 @@ import java.util.Random;
 */
 public class TorpedoStore {
 
-  // rate of failing to fire torpedos [0.0, 1.0]
+  // rate of failing to fire torpedoes [0.0, 1.0]
   private double FAILURE_RATE = 0.0; //NOSONAR
 
   private int torpedoCount = 0;
+
+  // Random generator should be an instance variable to avoid creating it multiple times
+  private Random generator = new Random();
 
   public TorpedoStore(int numberOfTorpedos){
     this.torpedoCount = numberOfTorpedos;
@@ -29,19 +32,19 @@ public class TorpedoStore {
   }
 
   public boolean fire(int numberOfTorpedos){
+    // Ensure valid number of torpedoes
     if(numberOfTorpedos < 1 || numberOfTorpedos > this.torpedoCount){
-      new IllegalArgumentException("numberOfTorpedos");
+      throw new IllegalArgumentException("Invalid number of torpedoes: " + numberOfTorpedos);
     }
 
     boolean success = false;
 
     // simulate random overheating of the launcher bay which prevents firing
-    Random generator = new Random();
     double r = generator.nextDouble();
 
     if (r >= FAILURE_RATE) {
       // successful firing
-      this.torpedoCount =- numberOfTorpedos;
+      this.torpedoCount -= numberOfTorpedos; // Fixed: Correctly decrease torpedo count
       success = true;
     } else {
       // simulated failure
